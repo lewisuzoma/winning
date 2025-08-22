@@ -1,0 +1,28 @@
+<template>
+    <div class="flex items-center justify-between w-full p-3 rounded-2xl bg-gradient-to-br from-green-500 to-green-700 ">
+      
+      <!-- Left side: Beelucky Logo -->
+      <div class="flex items-center space-x-6">
+        <svg @click="$emit('back')" xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" class="bi bi-arrow-left-circle cursor-pointer" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8m15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-4.5-.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5z"/>
+        </svg>
+        <span class="text-xl font-bold text-gray-800 pl-2">{{formatPage(page[page.length - 1])}}</span>
+      </div>
+      
+    </div>
+</template>
+<script setup>
+const props = defineProps(['page'])
+
+const formatPage = (name) => {
+  return name
+    .split('-')                          
+    .map(word => 
+      word.charAt(0).toUpperCase() + 
+      word.slice(1).toLowerCase()    
+    )
+    .join(' ');      
+}
+
+
+</script>
