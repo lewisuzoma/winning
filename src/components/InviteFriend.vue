@@ -38,7 +38,7 @@ import { ref } from 'vue';
         <!-- Social Media Icons -->
         <div class="flex justify-center space-x-4 mt-3! w-full">
           <!-- whatsapp -->
-           <img src="/public/whatsapp.png" class="cursor-pointer rounded-full hover:scale-110"/>
+           <img src="/whatsapp.png" class="cursor-pointer rounded-full hover:scale-110"/>
           
         </div>
       </div>

@@ -1,5 +1,5 @@
 <template>
-    <div class="flex justify-center min-h-screen relative p-4">
+    <div class="flex justify-center min-h-screen relative md:p-4">
         <div class="confetti"></div>
         <div class="bg-gradient-to-br from-green-500 to-green-700 p-2 rounded-[2rem] shadow-2xl relative min-h-3/4! w-full max-w-xl overflow-hidden border-4 border-gray-50">
             <!-- Background Bubbles/Orbs -->

@@ -22,11 +22,11 @@
                         :key="i"
                         :style="{ '--i': i + 1, '--clr': item.color }"
                     >
-                        <span>#{{ item.value }}</span>
+                        <span class="text-wrap">{{ item.value }}</span>
                     </div>
                 </div>
             </div>
-            <button @click="spin" class="bg-gradient-to-br from-gray-200 to-gray-400 hover:bg-green-500 cursor-pointer text-gray-800 font-semibold py-2! px-8! rounded-full transition-colors duration-300 transition-transform transform hover:scale-105">
+            <button @click="spinWheel" class="bg-gradient-to-br from-gray-200 to-gray-400 hover:bg-green-500 cursor-pointer text-gray-800 font-semibold py-2! px-8! rounded-full transition-colors duration-300 transform hover:scale-105">
                 Play
             </button>
 
@@ -37,44 +37,73 @@
 <script setup lang="ts">
 import { ref } from "vue"
 
-const rotation = ref(0)
-let value = Math.ceil(Math.random() * 3600)
+const rotation = ref(0);
+// let value = Math.ceil(Math.random() * 3600);
 
 const numbers = [
-  
-  { value: 100, color: "#81c784" },  // Soft Green
-  { value: 1, color: "#a5d6a7" },   // Lighter Green
-  { value: 50, color: "#c8e6c9" },  // Pale Green
-  { value: 0, color: "#b3e5fc" },   // Light Sky Blue
-  { value: 1000, color: "#9e9e9e" }, // Muted Gray (a neutral that works with green)
-  { value: 10, color: "#ffcdd2" },  // Blush Pink (a subtle, warm accent)
-  { value: 5, color: "#c5e1a5" },   // Pale Lime Green
-  { value: 20, color: "#a8e4a0" },  // Light Mint Green
-
-
-  // { value: 100, color: "#a5d6a7" }, // Soft Green
-  // { value: 1, color: "#b3e5fc" },  // Light Blue
-  // { value: 50, color: "#ef9a9a" }, // Muted Red
-  // { value: 0, color: "#fff59d" },  // Pale Yellow
-  // { value: 1000, color: "#ce93d8" },// Muted Purple
-  // { value: 10, color: "#ffab91" }, // Soft Orange
-  // { value: 5, color: "#81c784" },  // Medium Green
-  // { value: 20, color: "#64b5f6" }, // Pastel Blue
-
-  // { value: 100, color: "#db7093" },
-  // { value: 1, color: "#20b2aa" },
-  // { value: 50, color: "#d63e92" },
-  // { value: 0, color: "#daa520" },
-  // { value: 1000, color: "#ff34f0" },
-  // { value: 10, color: "#ff7f50" },
-  // { value: 5, color: "#3cb371" },
-  // { value: 20, color: "#4169e1" },
-]
+  { value: "Try Again / No Win", color: "#9e9e9e", probability: 40 },
+  { value: "100MB", color: "#81c784", probability: 0 },
+  { value: "500MB", color: "#a5d6a7", probability: 10 },
+  // { value: "1GB", color: "#c8e6c9", probability: 0 },
+  // { value: "3.5GB", color: "#b3e5fc", probability: 0 },
+  { value: "₦500", color: "#ffcdd2", probability: 5 },
+  { value: "₦1,000", color: "#c5e1a5", probability: 0 },
+  { value: "₦3,000", color: "#a8e4a0", probability: 0 },
+  { value: "₦10,000 Grand Win", color: "#ffab91", probability: 0 }, // Controlled manually
+  { value: "₦100,000 NaijaWINS STAR", color: "#64b5f6", probability: 0 }, // Controlled manually
+];
 
 function spin() {
-  rotation.value = value
-  value += Math.ceil(Math.random() * 3600)
-  console.log(value)
+  const weightedNumbers = numbers.flatMap(item => Array(item.probability).fill(item));
+  const randomIndex = Math.floor(Math.random() * weightedNumbers.length);
+  const selectedItem = weightedNumbers[randomIndex];
+
+  console.log(`Selected: ${selectedItem.value}`);
+
+  const segmentAngle = 360 / numbers.length;
+  const selectedIndex = numbers.findIndex(item => item.value === selectedItem.value);
+  const selectedAngle = segmentAngle * selectedIndex;
+
+  rotation.value = selectedAngle + Math.ceil(Math.random() * 3600); // Ensure the spin stops at the correct segment
+}
+
+function spinWheel() {
+  // Step 1: Build weighted pool
+  const weightedNumbers = numbers.flatMap(item =>
+    Array(item.probability).fill(item)
+  );
+
+  if (weightedNumbers.length === 0) {
+    console.warn("No probabilities set!");
+    return;
+  }
+
+  // Step 2: Pick one random item
+  const randomIndex = Math.floor(Math.random() * weightedNumbers.length);
+  const selectedItem = weightedNumbers[randomIndex];
+
+  console.log(`Selected: ${selectedItem.value}`);
+
+  // Step 3: Find its index in original numbers array
+  const selectedIndex = numbers.findIndex(
+    item => item.value === selectedItem.value
+  );
+
+  // Step 4: Compute exact angle
+  const segmentAngle = 360 / numbers.length;
+
+  // Center of segment = start angle + half segment
+  const selectedAngle =
+    (segmentAngle * selectedIndex) + segmentAngle / 10;
+
+  // Step 5: Add extra full rotations for animation
+  // const extraSpins = 5; // spin at least 5 times
+  const extraSpins = Math.floor(Math.random() * 6) + 3; // 3–8 full spins
+  const finalRotation = (360 * extraSpins) + (360 - selectedAngle);
+  // const finalRotation = 360 * extraSpins + (360 - selectedAngle);
+
+  // Apply
+  rotation.value = finalRotation;
 }
 
 </script>
@@ -157,10 +186,11 @@ function spin() {
 .number span {
   position: relative;
   transform: rotate(45deg);
-  font-size: 2em;
+  font-size: 0.9em;
+  text-wrap: wrap;
   font-weight: 700;
   color: #fff;
-  text-shadow: 3px 5px 2px rgba(0, 0, 0, 0.15);
+  /* text-shadow: 3px 5px 2px rgba(0, 0, 0, 0.15); */
 }
 
 .number span::before {
